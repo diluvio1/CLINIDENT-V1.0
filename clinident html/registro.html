@@ -8,7 +8,7 @@
     
     <style>
         :root {
-            --primary: #3b8ed0;
+            --primary: #1186e6;
             --success: #27AE60;
             --bg-glass: rgba(255, 255, 255, 0.95);
             --disabled: #bdc3c7;
@@ -226,11 +226,33 @@
         }
 
         function finalizarRegistro() {
-            if(document.getElementById('input-codigo').value.toUpperCase() === "SENA4") {
-                alert("¡Cuenta creada con éxito!");
+    if(document.getElementById('input-codigo').value.toUpperCase() === "SENA4") {
+        
+        // Creamos un paquete con tus datos
+        const datos = new FormData();
+        datos.append('nombre', document.getElementById('nom').value);
+        datos.append('apellido', document.getElementById('ape').value);
+        datos.append('email', document.getElementById('email').value);
+        datos.append('telefono', document.getElementById('tel').value);
+        datos.append('password', document.getElementById('pass').value);
+
+        // Los enviamos al archivo PHP de forma "invisible"
+        fetch('guardar_usuario.php', {
+            method: 'POST',
+            body: datos
+        })
+        .then(res => res.text())
+        .then(resultado => {
+            if(resultado === "success") {
+                alert("¡Cuenta creada con éxito y guardada en la base de datos!");
                 window.location.href = "login.html";
             } else {
-                alert("Código incorrecto.");
+                alert("Hubo un error al guardar en la base de datos.");
+            }
+        });
+
+    } else {
+        alert("Código incorrecto.");
     }
 }
     </script>
