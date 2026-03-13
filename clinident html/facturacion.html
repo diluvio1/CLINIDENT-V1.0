@@ -143,9 +143,9 @@ margin-bottom:20px;
 <div class="container">
 
 <div class="header">
-<img src="logo-removebg-preview.png">
+<img src="clinident_logo.png">
 <h1>CLINIDENT - Sistema Dental</h1>
-<img src="mascota-removebg-preview.png">
+<img src="mascota.png">
 </div>
 
 <div class="section">
@@ -431,104 +431,103 @@ document.getElementById("total").innerText=totalFinal.toFixed(2);
 
 }
 
-function emitirFactura(){
+function emitirFactura() {
+    if (!consultaActiva) {
+        alert("Primero cree una consulta");
+        return;
+    }
 
-if(!consultaActiva){
-alert("Primero cree una consulta");
-return;
-}
+    if (tratamientos.length == 0) {
+        alert("No hay tratamientos");
+        return;
+    }
 
-if(tratamientos.length==0){
-alert("No hay tratamientos");
-return;
-}
+    let tablaTratamientos = "";
+    tratamientos.forEach(t => {
+        let sub = t.precio * t.cantidad;
+        tablaTratamientos += `
+        <tr>
+            <td>${t.nombre}</td>
+            <td>${t.cantidad}</td>
+            <td>$${t.precio.toFixed(2)}</td>
+            <td>$${sub.toFixed(2)}</td>
+        </tr>`;
+    });
 
-let tablaTratamientos="";
+    let doctorSeleccionado = document.getElementById("doctor").value;
 
-tratamientos.forEach(t=>{
+    // Solo este bloque se guardará en el historial (sin botones)
+    let cuerpoFactura = `
+        <div class="factura-header">
+            <h2>CLINIDENT</h2>
+            <p>Factura #${numeroFactura}</p>
+        </div>
+        <p><strong>Paciente:</strong> ${nombre.value}</p>
+        <p><strong>Documento:</strong> ${documento.value}</p>
+        <p><strong>Odontólogo:</strong> ${doctorSeleccionado}</p>
+        <hr>
+        <table class="table">
+            <tr>
+                <th>Tratamiento</th>
+                <th>Cant</th>
+                <th>Precio</th>
+                <th>Subtotal</th>
+            </tr>
+            ${tablaTratamientos}
+        </table>
+        <h2>Total: $${totalFinal.toFixed(2)}</h2>
+    `;
 
-let sub=t.precio*t.cantidad;
+    // Inyectamos cuerpo + botones de acción
+    contenidoFactura.innerHTML = cuerpoFactura + `
+        <div class="no-print" style="margin-top:20px;">
+            <button onclick="registrarPago()" class="btn-success">Confirmar y Pagar</button>
+            <button onclick="cerrarFactura()" class="btn-primary">Cerrar</button>
+        </div>
+    `;
 
-tablaTratamientos+=`
-<tr>
-<td>${t.nombre}</td>
-<td>${t.cantidad}</td>
-<td>$${t.precio}</td>
-<td>$${sub}</td>
-</tr>
-`;
-
-});
-
-let doctorSeleccionado = document.getElementById("doctor").value;
-
-contenidoFactura.innerHTML=`
-
-<div class="factura-header">
-<h2>CLINIDENT</h2>
-<p>Factura #${numeroFactura}</p>
-</div>
-
-<p><strong>Paciente:</strong> ${nombre.value}</p>
-<p><strong>Documento:</strong> ${documento.value}</p>
-<p><strong>Odontólogo:</strong> ${doctorSeleccionado}</p>
-
-<hr>
-
-<table class="table">
-
-<tr>
-<th>Tratamiento</th>
-<th>Cantidad</th>
-<th>Precio</th>
-<th>Subtotal</th>
-</tr>
-
-${tablaTratamientos}
-
-</table>
-
-<h2>Total: $${totalFinal.toFixed(2)}</h2>
-
-<button onclick="cerrarFactura()" class="btn-primary">Cerrar</button>
-
-`;
-
-modalFactura.style.display="flex";
-
-facturaGenerada=true;
-
+    modalFactura.style.display = "flex";
+    facturaGenerada = true;
 }
 
 function cerrarFactura(){
 modalFactura.style.display="none";
 }
 
-function registrarPago(){
+function registrarPago() {
+    if (!facturaGenerada) {
+        alert("Primero emita factura");
+        return;
+    }
 
-if(!facturaGenerada){
-alert("Primero emita factura");
-return;
+    if (pagos.some(p => p.factura == numeroFactura)) {
+        alert("Factura ya pagada");
+        return;
+    }
+
+    // Clonamos el contenido pero removemos los botones antes de guardar
+    let tempDiv = document.createElement("div");
+    tempDiv.innerHTML = contenidoFactura.innerHTML;
+    let botones = tempDiv.querySelector(".no-print");
+    if(botones) botones.remove();
+
+    pagos.push({
+        factura: numeroFactura,
+        paciente: nombre.value,
+        total: totalFinal,
+        detalleHTML: tempDiv.innerHTML // Guardamos solo la información limpia
+    });
+
+    alert("Pago registrado con éxito");
+    
+    // Incrementamos factura y reseteamos todo para el siguiente paciente
+    numeroFactura++;
+    nuevaConsulta(); // Esto limpia tratamientos y alertas
+    nombre.value = ""; 
+    documento.value = "";
+    document.getElementById("selectPaciente").value = "";
+    cerrarFactura();
 }
-
-if(pagos.some(p=>p.factura==numeroFactura)){
-alert("Factura ya pagada");
-return;
-}
-
-pagos.push({
-factura:numeroFactura,
-paciente:nombre.value,
-total:totalFinal
-});
-
-numeroFactura++;
-facturaGenerada=false;
-
-alert("Pago registrado");
-
-}
-
 function verPagos(){
 
 let contenido=`<h2>Historial de Pagos</h2>
@@ -539,16 +538,18 @@ let contenido=`<h2>Historial de Pagos</h2>
 <th>Factura</th>
 <th>Paciente</th>
 <th>Total</th>
-</tr>`;
+<th>Acción</th> </tr>`;
 
-pagos.forEach(p=>{
+pagos.forEach((p, index)=>{ // 2. Añadimos 'index' aquí para saber qué factura abrir
 
 contenido+=`
 <tr>
 <td>${p.factura}</td>
 <td>${p.paciente}</td>
 <td>$${p.total.toFixed(2)}</td>
-</tr>
+<td>
+    <button onclick="verDetalleFactura(${index})" class="btn-primary" style="margin:0; padding:5px 10px;">Ver Factura</button>
+</td> </tr>
 `;
 
 });
@@ -564,6 +565,22 @@ modalPagos.style.display="flex";
 
 }
 
+function verDetalleFactura(index) {
+    let pago = pagos[index];
+    
+    if (pago && pago.detalleHTML) {
+        // Inyectamos el HTML limpio y agregamos UN solo botón de cerrar
+        contenidoFactura.innerHTML = pago.detalleHTML + `
+            <div style="margin-top:20px;">
+                <button onclick="window.print()" class="btn-success">Imprimir PDF</button>
+                <button onclick="cerrarFactura()" class="btn-primary">Regresar</button>
+            </div>
+        `;
+        
+        modalPagos.style.display = "none";
+        modalFactura.style.display = "flex";
+    }
+}
 function cerrarPagos(){
 modalPagos.style.display="none";
 }
