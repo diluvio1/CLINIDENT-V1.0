@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Estadísticas</title>
+
+<!-- Librería para crear gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" href="estilos.css">
+
+</head>
+
+<body>
+
+<h1>Estadísticas de Pacientes</h1>
+
+<div class="estadisticas-container">
+
+<h2>Distribución de pacientes por edad</h2>
+
+<canvas id="graficoPacientes" width="400" height="200"></canvas>
+
+</div>
+
+<script>
+
+let pacientes = JSON.parse(localStorage.getItem("pacientes")) || [];
+
+let menores = 0;
+let adultos = 0;
+
+pacientes.forEach(p => {
+
+let edad = parseInt(p.Edad);
+
+if(edad < 18){
+menores++;
+}else{
+adultos++;
+}
+
+});
+
+const ctx = document.getElementById('graficoPacientes');
+
+new Chart(ctx, {
+
+type: 'bar',
+
+data: {
+
+labels: ['Menores de edad','Adultos'],
+
+datasets: [{
+
+label: 'Pacientes registrados',
+
+data: [menores, adultos],
+
+borderWidth: 1
+
+}]
+
+},
+
+options: {
+
+responsive: true,
+
+scales: {
+y: {
+beginAtZero: true
+}
+}
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
