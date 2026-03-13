@@ -10,9 +10,18 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
 
 body{
-background:linear-gradient(135deg,#eef2ff,#f0fdfa);
+background:linear-gradient(135deg,#dbeafe,#f0fdfa,#e9d5ff);
+background-size:300% 300%;
+animation:fondoAnimado 12s ease infinite;
+
 padding:30px;
 color:#1e293b;
+}
+
+@keyframes fondoAnimado{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
 }
 
 .container{max-width:1100px;margin:auto;}
@@ -37,11 +46,18 @@ h2{margin-bottom:15px;color:#0f172a;}
 .section{
 background:white;
 padding:25px;
-border-radius:12px;
+border-radius:14px;
 margin-bottom:25px;
-box-shadow:0 6px 18px rgba(0,0,0,0.08); 
+
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+
+transition:all .25s ease;
 }
 
+.section:hover{
+transform:translateY(-4px);
+box-shadow:0 18px 35px rgba(0,0,0,0.15);
+}
 .grid{
 display:grid;
 grid-template-columns:repeat(4,1fr);
@@ -53,21 +69,67 @@ label{display:block;margin-bottom:5px;font-size:14px;}
 
 input,select,textarea{
 width:100%;
-padding:9px;
-border-radius:8px;
+padding:10px;
+border-radius:10px;
 border:1px solid #cbd5e1;
+
 margin-bottom:8px;
+
+transition:all .2s ease;
+}
+
+input:focus,select:focus,textarea:focus{
+outline:none;
+border-color:#2563eb;
+box-shadow:0 0 0 3px rgba(37,99,235,0.2);
+transform:scale(1.02);
 }
 
 button{
 cursor:pointer;
 border:none;
-border-radius:8px;
-padding:10px 15px;
+border-radius:10px;
+padding:10px 16px;
 font-weight:600;
-transition:.2s;
 margin-right:10px;
 margin-top:10px;
+
+transition: all 0.25s ease;
+position: relative;
+overflow:hidden;
+}
+
+/* elevación */
+button:hover{
+transform: translateY(-4px) scale(1.03);
+box-shadow: 0 10px 22px rgba(0,0,0,0.25);
+}
+
+/* al hacer click */
+button:active{
+transform: translateY(1px) scale(0.97);
+box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* efecto de brillo */
+button::before{
+content:"";
+position:absolute;
+top:0;
+left:-100%;
+width:100%;
+height:100%;
+background:linear-gradient(
+120deg,
+transparent,
+rgba(255,255,255,0.4),
+transparent
+);
+transition:0.5s;
+}
+
+button:hover::before{
+left:100%;
 }
 
 .btn-primary{background:#1e40af;color:white;}
@@ -81,11 +143,32 @@ border-collapse:collapse;
 margin-top:15px;
 }
 
+.table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+overflow:hidden;
+border-radius:10px;
+}
+
+.table th{
+background:#e0e7ff;
+color:#1e3a8a;
+}
+
 .table th,.table td{
 padding:10px;
 border-bottom:1px solid #e2e8f0;
 }
 
+.table tbody tr{
+transition:all .2s ease;
+}
+
+.table tbody tr:hover{
+background:#f1f5ff;
+transform:scale(1.01);
+}
 .total-box{
 background:#f1f5f9;
 padding:18px;
@@ -93,11 +176,13 @@ border-radius:10px;
 margin-top:18px;
 }
 
-.total-big{
-font-size:22px;
-font-weight:bold;
-color:#16a34a;
-margin-top:8px;
+.total-box{
+background:linear-gradient(135deg,#f1f5f9,#e0f2fe);
+padding:18px;
+border-radius:12px;
+margin-top:18px;
+
+box-shadow:0 6px 15px rgba(0,0,0,0.08);
 }
 
 .alert{
@@ -183,6 +268,8 @@ margin-bottom:20px;
 </div>
 
 <button class="btn-gray" onclick="crearPaciente()">Nuevo Paciente</button>
+<button class="btn-danger" onclick="eliminarPaciente()">Eliminar Paciente</button>
+<button class="btn-gray" onclick="historialPaciente()">Historial del Paciente</button>
 <button class="btn-primary" onclick="crearConsulta()">Crear Consulta</button>
 <button class="btn-danger" onclick="nuevaConsulta()">Nueva Consulta</button>
 
@@ -237,7 +324,6 @@ margin-bottom:20px;
 <h2>Factura y Pago</h2>
 
 <button class="btn-success" onclick="emitirFactura()">Emitir Factura</button>
-<button class="btn-primary" onclick="registrarPago()">Registrar Pago</button>
 <button class="btn-gray" onclick="verPagos()">Ver Pagos</button>
 
 </div>
@@ -254,7 +340,7 @@ margin-bottom:20px;
 
 <script>
 
-let pacientes=[
+let pacientes = JSON.parse(localStorage.getItem("pacientes")) || [
 {nombre:"Juan Pérez",documento:"87654321"},
 {nombre:"María López",documento:"12345678"},
 {nombre:"Carlos Torres",documento:"99887766"}
@@ -264,8 +350,9 @@ let tratamientos=[];
 let consultaActiva=false;
 let totalFinal=0;
 let facturaGenerada=false;
-let pagos=[];
-let numeroFactura=1;
+let pagos = JSON.parse(localStorage.getItem("pagos")) || [];
+let facturasEliminadas = JSON.parse(localStorage.getItem("facturasEliminadas")) || [];
+let numeroFactura = parseInt(localStorage.getItem("numeroFactura")) || 1;
 
 const tratamientosDB={
 "Dra. Paula Ríos - Ortodoncia":[
@@ -289,6 +376,80 @@ const tratamientosDB={
 {nombre:"Blanqueamiento",precio:250}
 ]
 };
+
+function historialPaciente(){
+
+let doc = documento.value;
+
+if(doc==""){
+alert("Seleccione un paciente");
+return;
+}
+
+let facturasPaciente = pagos.filter(p => p.paciente === nombre.value);
+
+let contenido = `<h2>Historial de ${nombre.value}</h2>
+<table class="table">
+<tr>
+<th>Factura</th>
+<th>Total</th>
+<th>Acción</th>
+</tr>`;
+
+facturasPaciente.forEach((f,i)=>{
+
+contenido+=`
+<tr>
+<td>${f.factura}</td>
+<td>$${f.total.toFixed(2)}</td>
+<td>
+<button onclick="verDetalleFactura(${pagos.indexOf(f)})"
+class="btn-primary">Ver</button>
+</td>
+</tr>
+`;
+
+});
+
+contenido+=`</table>
+<br>
+<button onclick="cerrarPagos()" class="btn-primary">Cerrar</button>`;
+
+contenidoPagos.innerHTML = contenido;
+modalPagos.style.display = "flex";
+
+}
+
+function eliminarPaciente(){
+
+let index = document.getElementById("selectPaciente").value;
+
+if(index === ""){
+alert("Seleccione un paciente");
+return;
+}
+
+if(!confirm("¿Seguro que desea eliminar este paciente?")){
+return;
+}
+
+// eliminar del array
+pacientes.splice(index,1);
+
+// actualizar localStorage
+localStorage.setItem("pacientes", JSON.stringify(pacientes));
+
+// recargar lista
+cargarPacientes();
+
+// limpiar campos
+nombre.value="";
+documento.value="";
+document.getElementById("selectPaciente").value="";
+
+alert("Paciente eliminado");
+
+}
 
 function cargarPacientes(){
 let select=document.getElementById("selectPaciente");
@@ -321,6 +482,10 @@ return;
 }
 
 pacientes.push({nombre:nom,documento:doc});
+
+// guardar pacientes
+localStorage.setItem("pacientes", JSON.stringify(pacientes));
+
 cargarPacientes();
 alert("Paciente agregado");
 }
@@ -489,7 +654,41 @@ function emitirFactura() {
     modalFactura.style.display = "flex";
     facturaGenerada = true;
 }
+function eliminarFactura(index){
 
+let motivo = prompt("Ingrese el motivo de eliminación de la factura:");
+
+if(!motivo || motivo.trim() === ""){
+alert("Debe ingresar un motivo");
+return;
+}
+
+let factura = pagos[index];
+
+// guardar en historial de eliminadas
+facturasEliminadas.push({
+factura: factura.factura,
+paciente: factura.paciente,
+total: factura.total,
+motivo: motivo,
+fecha: new Date().toLocaleString()
+});
+
+// guardar historial
+localStorage.setItem("facturasEliminadas", JSON.stringify(facturasEliminadas));
+
+// eliminar de pagos
+pagos.splice(index,1);
+
+// actualizar almacenamiento
+localStorage.setItem("pagos", JSON.stringify(pagos));
+
+alert("Factura eliminada y registrada");
+
+// actualizar tabla
+verPagos();
+
+}
 function cerrarFactura(){
 modalFactura.style.display="none";
 }
@@ -515,14 +714,22 @@ function registrarPago() {
         factura: numeroFactura,
         paciente: nombre.value,
         total: totalFinal,
-        detalleHTML: tempDiv.innerHTML // Guardamos solo la información limpia
+        detalleHTML: tempDiv.innerHTML
     });
+
+    // 🔹 Guardamos pagos en el navegador
+    localStorage.setItem("pagos", JSON.stringify(pagos));
 
     alert("Pago registrado con éxito");
     
-    // Incrementamos factura y reseteamos todo para el siguiente paciente
+    // 🔹 Incrementamos factura
     numeroFactura++;
-    nuevaConsulta(); // Esto limpia tratamientos y alertas
+
+    // 🔹 Guardamos el número de factura actual
+    localStorage.setItem("numeroFactura", numeroFactura);
+
+    // 🔹 Limpiar sistema para siguiente paciente
+    nuevaConsulta();
     nombre.value = ""; 
     documento.value = "";
     document.getElementById("selectPaciente").value = "";
@@ -538,9 +745,9 @@ let contenido=`<h2>Historial de Pagos</h2>
 <th>Factura</th>
 <th>Paciente</th>
 <th>Total</th>
-<th>Acción</th> </tr>`;
+<th>Acciónes</th> </tr>`;
 
-pagos.forEach((p, index)=>{ // 2. Añadimos 'index' aquí para saber qué factura abrir
+pagos.forEach((p, index)=>{
 
 contenido+=`
 <tr>
@@ -548,10 +755,22 @@ contenido+=`
 <td>${p.paciente}</td>
 <td>$${p.total.toFixed(2)}</td>
 <td>
-    <button onclick="verDetalleFactura(${index})" class="btn-primary" style="margin:0; padding:5px 10px;">Ver Factura</button>
-</td> </tr>
-`;
 
+<button onclick="verDetalleFactura(${index})"
+class="btn-primary"
+style="margin:0;padding:5px 10px;">
+Ver
+</button>
+
+<button onclick="eliminarFactura(${index})"
+class="btn-danger"
+style="margin:0;padding:5px 10px;">
+Eliminar
+</button>
+
+</td>
+</tr>
+`;
 });
 
 contenido+=`</table>
