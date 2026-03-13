@@ -210,107 +210,83 @@
     </div>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('clinident_db_final')) || [];
-        const horarios = ["08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM", "04:30 PM", "05:00 PM"];
+    // 1. Configuración de horarios
+    const horarios = ["08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM", "04:30 PM", "05:00 PM"];
 
-        function cambiarVista(id) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('view-' + id).classList.add('active');
-        }
+    function cambiarVista(id) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('view-' + id).classList.add('active');
+    }
 
-        function prepararAgendado() {
-            document.getElementById('edit-id').value = "";
-            document.getElementById('titulo-agendar').innerText = "Configurar Agendamiento";
-            document.getElementById('btn-save').innerText = "Confirmar Espacio Médico";
-            document.getElementById('fecha').valueAsDate = new Date();
-            cambiarVista('agendar');
-            actualizarAgenda();
-        }
+    function prepararAgendado() {
+        document.getElementById('fecha').valueAsDate = new Date();
+        cambiarVista('agendar');
+        actualizarAgenda();
+    }
 
-        function actualizarAgenda() {
-            const grid = document.getElementById('grid-horas');
-            const doc = document.getElementById('doc').value;
-            const fecha = document.getElementById('fecha').value;
-            const editId = document.getElementById('edit-id').value;
-            grid.innerHTML = '';
+    function actualizarAgenda() {
+        const grid = document.getElementById('grid-horas');
+        grid.innerHTML = '';
+        horarios.forEach(h => {
+            const div = document.createElement('div');
+            div.className = 'hora-slot';
+            div.innerText = h;
+            if(document.getElementById('hora-seleccionada').value === h) div.classList.add('selected');
             
-            horarios.forEach(h => {
-                const ocupado = db.find(c => c.doc === doc && c.fecha === fecha && c.hora === h && c.id.toString() !== editId);
-                const div = document.createElement('div');
-                div.className = 'hora-slot' + (ocupado ? ' occupied' : '');
-                div.innerText = h;
-                if(!ocupado) {
-                    if(document.getElementById('hora-seleccionada').value === h) div.classList.add('selected');
-                    div.onclick = function() {
-                        document.querySelectorAll('.hora-slot').forEach(s => s.classList.remove('selected'));
-                        this.classList.add('selected');
-                        document.getElementById('hora-seleccionada').value = h;
-                    };
-                }
-                grid.appendChild(div);
-            });
+            div.onclick = function() {
+                document.querySelectorAll('.hora-slot').forEach(s => s.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('hora-seleccionada').value = h;
+                console.log("Hora seleccionada:", h);
+            };
+            grid.appendChild(div);
+        });
+    }
+
+    // 2. FUNCIÓN DE GUARDADO (LA QUE IMPORTA)
+    function finalizarAgendado() {
+        console.log("Botón presionado: Iniciando guardado...");
+
+        const docSelected = document.getElementById('doc').value;
+        const fechaSelected = document.getElementById('fecha').value;
+        const horaSelected = document.getElementById('hora-seleccionada').value;
+
+        if(!fechaSelected || !horaSelected) {
+            alert("⚠️ Por favor selecciona una fecha y haz clic en una hora.");
+            return;
         }
 
-        function finalizarAgendado() {
-            const doc = document.getElementById('doc').value;
-            const fecha = document.getElementById('fecha').value;
-            const hora = document.getElementById('hora-seleccionada').value;
-            const editId = document.getElementById('edit-id').value;
+        // Crear el paquete de datos
+        const formData = new FormData();
+        formData.append('paciente', 'Nico');
+        formData.append('doctor', docSelected);
+        formData.append('fecha', fechaSelected);
+        formData.append('hora', horaSelected);
 
-            if(!fecha || !hora) { alert('⚠️ Seleccione fecha y horario.'); return; }
+        console.log("Enviando datos a guardar.php...");
 
-            if(editId) {
-                const index = db.findIndex(c => c.id.toString() === editId);
-                db[index] = { ...db[index], doc, fecha, hora };
+        fetch('guardar.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log("Respuesta del servidor:", data);
+            if(data.trim() === "Exito") {
+                alert("✅ ¡Cita guardada con éxito en MySQL!");
+                window.location.href = "recepcion_pagos.html";
             } else {
-                db.push({ id: Date.now(), doc, fecha, hora });
+                alert("Servidor dice: " + data);
             }
+        })
+        .catch(error => {
+            console.error("Error en Fetch:", error);
+            alert("Error de conexión. Revisa la consola (F12)");
+        });
+    }
 
-            localStorage.setItem('clinident_db_final', JSON.stringify(db));
-            renderLista();
-            cambiarVista('lista');
-        }
-
-        function renderLista() {
-            const res = document.getElementById('lista-citas');
-            res.innerHTML = db.length ? '' : '<p style="text-align:center; padding:40px;">No hay citas.</p>';
-            db.sort((a,b) => new Date(a.fecha) - new Date(b.fecha)).forEach(c => {
-                res.innerHTML += `
-                    <div class="report-item">
-                        <div>
-                            <b style="font-size:1.1rem; color:var(--accent);">${c.doc}</b><br>
-                            <span>${c.fecha} • ${c.hora}</span>
-                        </div>
-                        <div class="actions-btns">
-                            <button class="btn-edit" onclick="cargarParaEditar(${c.id})">Editar</button>
-                            <button class="btn-cancel" onclick="eliminar(${c.id})">Eliminar</button>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        function cargarParaEditar(id) {
-            const cita = db.find(c => c.id === id);
-            document.getElementById('edit-id').value = cita.id;
-            document.getElementById('doc').value = cita.doc;
-            document.getElementById('fecha').value = cita.fecha;
-            document.getElementById('hora-seleccionada').value = cita.hora;
-            cambiarVista('agendar');
-            actualizarAgenda();
-        }
-
-        function cancelarEdicion() {
-            document.getElementById('edit-id').value = "";
-            cambiarVista('menu');
-        }
-
-        function eliminar(id) {
-            if(confirm('¿Eliminar cita?')) {
-                db = db.filter(c => c.id !== id);
-                localStorage.setItem('clinident_db_final', JSON.stringify(db));
-                renderLista();
-            }
-        }
-    </script>
+    function cancelarEdicion() { cambiarVista('menu'); }
+</script>
 </body>
 </html>
+

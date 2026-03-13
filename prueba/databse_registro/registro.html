@@ -210,51 +210,66 @@
         }
 
         function simularEnvio() {
-            const pass = document.getElementById('pass').value;
-            const conf = document.getElementById('conf').value;
+        const pass = document.getElementById('pass').value;
+        const conf = document.getElementById('conf').value;
 
-            if(pass !== conf) return alert("Las contraseñas no coinciden.");
-
-            document.getElementById('btn-envio').style.display = 'none';
-            document.getElementById('loader').style.display = 'block';
-
-            setTimeout(() => {
-                document.getElementById('step-1').style.display = 'none';
-                document.getElementById('step-2').style.display = 'block';
-                document.getElementById('input-codigo').focus();
-            }, 1500);
+        // Validaciones básicas antes de mostrar el código
+        if (!document.getElementById('nom').value || !document.getElementById('email').value) {
+            return alert("Por favor, completa los campos obligatorios.");
+        }
+        if (pass !== conf) {
+            return alert("Las contraseñas no coinciden.");
         }
 
-        function finalizarRegistro() {
-    if(document.getElementById('input-codigo').value.toUpperCase() === "SENA4") {
-        
-        // Creamos un paquete con tus datos
-        const datos = new FormData();
-        datos.append('nombre', document.getElementById('nom').value);
-        datos.append('apellido', document.getElementById('ape').value);
-        datos.append('email', document.getElementById('email').value);
-        datos.append('telefono', document.getElementById('tel').value);
-        datos.append('password', document.getElementById('pass').value);
+        // Animación de carga que ya tenías
+        document.getElementById('btn-envio').style.display = 'none';
+        document.getElementById('loader').style.display = 'block';
 
-        // Los enviamos al archivo PHP de forma "invisible"
-        fetch('guardar_usuario.php', {
-            method: 'POST',
-            body: datos
-        })
-        .then(res => res.text())
-        .then(resultado => {
-            if(resultado === "success") {
-                alert("¡Cuenta creada con éxito y guardada en la base de datos!");
-                window.location.href = "login.html";
-            } else {
-                alert("Hubo un error al guardar en la base de datos.");
-            }
-        });
-
-    } else {
-        alert("Código incorrecto.");
+        setTimeout(() => {
+            document.getElementById('step-1').style.display = 'none';
+            document.getElementById('step-2').style.display = 'block';
+            document.getElementById('input-codigo').focus();
+        }, 1500);
     }
-}
+
+    // 5. FINALIZAR REGISTRO (Aquí conectamos con la base de datos)
+    function finalizarRegistro() {
+        const codigoInput = document.getElementById('input-codigo').value.toUpperCase();
+        
+        if(codigoInput === "SENA4") {
+            
+            // Recolectamos los datos de tus inputs originales
+            const datos = new FormData();
+            datos.append('nombre', document.getElementById('nom').value);
+            datos.append('apellido', document.getElementById('ape').value);
+            datos.append('email', document.getElementById('email').value);
+            datos.append('telefono', document.getElementById('tel').value);
+            datos.append('password', document.getElementById('pass').value);
+
+            // Enviamos de forma "invisible" al PHP
+            fetch('guardar_usuario.php', { // <--- REVISA QUE NO HAYA ESPACIOS NI MAYÚSCULAS
+                method: 'POST',
+                body: datos
+            })
+            .then(res => res.text())
+            .then(resultado => {
+                if(resultado.trim() === "success") {
+                    alert("¡Cuenta de Clinident creada con éxito!");
+                    window.location.href = "login.html"; 
+                } else {
+                    // Si el PHP devuelve un error, lo mostramos aquí
+                    alert("Error en la base de datos: " + resultado);
+                }
+            })
+            .catch(error => {
+                alert("Error crítico de conexión.");
+                console.error(error);
+            });
+
+        } else {
+            alert("Código incorrecto.");
+        }
+    }
     </script>
 </body>
 </html>
