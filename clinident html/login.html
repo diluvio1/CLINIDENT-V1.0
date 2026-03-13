@@ -1,122 +1,101 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>CLINIDENT | Iniciar Sesión</title>
-
-<style>
-
-body{
-    margin:0;
-    font-family: Arial, Helvetica, sans-serif;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    background: linear-gradient(135deg,#8aa7a6,#3aa6a0);
-}
-
-.card{
-    background:white;
-    padding:40px;
-    border-radius:18px;
-    width:340px;
-    text-align:center;
-    box-shadow:0 15px 40px rgba(0,0,0,0.2);
-}
-
-.logo{
-    width:90px;
-    margin-bottom:10px;
-}
-
-h2{
-    color:#3d7fb1;
-    margin-bottom:25px;
-}
-
-.input-group{
-    text-align:left;
-    margin-bottom:18px;
-}
-
-label{
-    font-size:12px;
-    color:#666;
-}
-
-input{
-    width:100%;
-    padding:11px;
-    border-radius:6px;
-    border:1px solid #ddd;
-    margin-top:5px;
-    font-size:13px;
-}
-
-button{
-    width:100%;
-    padding:13px;
-    border:none;
-    border-radius:8px;
-    background:#4a8dc7;
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
-    margin-top:10px;
-}
-
-button:hover{
-    background:#3973a5;
-}
-
-.extra{
-    margin-top:15px;
-    font-size:12px;
-    color:#666;
-}
-
-a{
-    color:#3d7fb1;
-    text-decoration:none;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <title>CLINIDENT | Iniciar Sesión</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #8aa7a6, #3aa6a0);
+        }
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 18px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        .input-group { text-align: left; margin-bottom: 15px; }
+        label { font-size: 12px; color: #666; font-weight: bold; }
+        input, select {
+            width: 100%; padding: 11px; border-radius: 6px;
+            border: 1px solid #ddd; margin-top: 5px; box-sizing: border-box;
+        }
+        button {
+            width: 100%; padding: 13px; border: none; border-radius: 8px;
+            background: #4a8dc7; color: white; font-weight: bold;
+            cursor: pointer; margin-top: 10px;
+        }
+        button:hover { background: #3973a5; }
+    </style>
 </head>
-
 <body>
 
-<div class="card">
+    <div class="card">
+        <img src="clinident_logo.png" width="80" alt="Logo">
+        <h2>Iniciar Sesión</h2>
 
-<img src="clinident_logo.png" width="100" height="100">
+        <div class="input-group">
+            <label>Usuario</label>
+            <input type="text" id="user-name" placeholder="Tu nombre">
+        </div>
 
-<h2>Iniciar Sesión</h2>
+        <div class="input-group">
+            <label>Contraseña</label>
+            <input type="password" id="user-pass" placeholder="********">
+        </div>
 
-<form action="principal.html">
+        <div class="input-group">
+            <label>Acceder como:</label>
+            <select id="user-role">
+                <option value="paciente">Paciente </option>
+                <option value="odontologo">Odontologo </option>
+                <option value="recepcion">recepcion </option>
+                <option value="admin">Administrador (Mando Total)</option>
+            </select>
+        </div>
+        <button onclick="gestionarAcceso()">Entrar</button>
+    </div>
 
-<div class="input-group">
-<label>Nombre o correo</label>
-<input type="text" placeholder="nombre@clinident.com">
-</div>
+    
 
-<div class="input-group">
-<label>Contraseña</label>
-<input type="password" placeholder="********">
-</div>
+    <script>
+        function gestionarAcceso() {
+            const user = document.getElementById('user-name').value;
+            const pass = document.getElementById('user-pass').value;
+            const rol = document.getElementById('user-role').value;
 
+            // 1. Verificamos que no esté vacío
+            if (user === "" || pass === "") {
+                alert("⚠️ Por favor escribe tu usuario y contraseña");
+                return;
+            }
 
-<button type="submit">Entrar</button>
+            console.log("Intentando acceder como: " + rol);
 
-</form>
-
-<div class="links">
-<a href="recuperar.html">¿Olvidaste tu contraseña?</a>
-<a href="registro.html">Crear cuenta</a>
-
-</div>
-
-</div>
-
+            // 2. Lógica de redirección exacta
+            if (rol === "paciente") {
+                // IMPORTANTE: El navegador solo abre archivos .html
+                // Si tu archivo de Python genera la agenda, asegúrate de que se llame así:
+                window.location.href = "Agendacliente.html"; 
+            } 
+            else if(rol === "recepcion"){
+            window.location.href = "facturacion.html";
+            }    
+           
+            else if (rol === "odontologo") {
+                window.location.href = "odontologo.html";
+            }
+            else if (rol === "admin") {
+                window.location.href = "admin_panel.html";
+            }
+        }
+    </script>
 </body>
 </html>
