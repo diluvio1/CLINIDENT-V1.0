@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLINIDENT | Sistema Multi-Rol</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a; --accent: #2563eb; --bg: #fdfdfd; --card: #ffffff;
+        }
+
+        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--primary); }
+        
+        /* Navbar */
+        .navbar { 
+            background: white; padding: 20px 60px; display: flex; justify-content: space-between; 
+            align-items: center; border-bottom: 1px solid #f1f5f9; 
+        }
+        .logo { font-weight: 800; font-size: 28px; cursor: pointer; }
+        .logo span { color: var(--accent); }
+
+        .container { max-width: 1000px; margin: 40px auto; padding: 20px; }
+
+        /* Vistas */
+        .view { display: none; }
+        .active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Tarjetas de Menú */
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 30px; }
+        .menu-item {
+            background: white; padding: 30px; border-radius: 25px; text-align: center; cursor: pointer;
+            border: 1px solid #f1f5f9; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        .menu-item:hover { transform: translateY(-5px); border-color: var(--accent); }
+
+        /* Formulario Simple de Login para la prueba */
+        .login-box { max-width: 400px; margin: 100px auto; background: white; padding: 40px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        input, select { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
+        
+        .badge { padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+        .role-admin { background: #fee2e2; color: #991b1b; }
+        .role-doc { background: #dcfce7; color: #166534; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">CLINI<span>DENT</span></div>
+        <div id="user-info"></div>
+    </nav>
+
+    <div class="container">
+        
+        <div id="view-login" class="view active">
+            <div class="login-box">
+                <h2 style="text-align:center">Iniciar Sesión</h2>
+                <label>Selecciona tu Rol para probar:</label>
+                <select id="role-selector">
+                    <option value="paciente">Paciente (Nico)</option>
+                    <option value="odontologo">Odontólogo (Dr. Casas)</option>
+                    <option value="facturacion">Facturación / Recepción</option>
+                    <option value="admin">Administrador</option>
+                </select>
+                <button onclick="login()">Entrar al Sistema</button>
+            </div>
+        </div>
+
+        <div id="view-dashboard" class="view">
+            <h1 id="welcome-text">Bienvenido</h1>
+            <p id="role-description">Cargando permisos...</p>
+            <div id="menu-container" class="menu-grid">
+                </div>
+            <button onclick="logout()" style="margin-top:40px; background:#f1f5f9; color:var(--primary); width:auto; padding:10px 20px;">Cerrar Sesión</button>
+        </div>
+
+    </div>
+
+    
+
+    <script>
+        // Simulación de "Sesión"
+        let currentUser = null;
+
+        function login() {
+            const role = document.getElementById('role-selector').value;
+            
+            // Definimos el usuario actual basado en el rol elegido
+            currentUser = {
+                nombre: role === 'paciente' ? 'Nico' : 'Usuario Staff',
+                rol: role
+            };
+
+            mostrarDashboard();
+        }
+
+        function mostrarDashboard() {
+            const menu = document.getElementById('menu-container');
+            const welcome = document.getElementById('welcome-text');
+            const desc = document.getElementById('role-description');
+            
+            menu.innerHTML = ''; // Limpiamos el menú
+            welcome.innerText = `Hola, ${currentUser.nombre}`;
+            
+            // Lógica de Enrutamiento por Roles
+            if (currentUser.rol === 'paciente') {
+                desc.innerText = "Panel de Paciente: Gestiona tus citas personales.";
+                menu.innerHTML += crearBoton("📅 Agendar Cita", "alert('Ir a agendar')");
+                menu.innerHTML += crearBoton("📋 Mis Citas", "alert('Ver mis citas')");
+            } 
+            else if (currentUser.rol === 'odontologo') {
+                desc.innerText = "Panel Médico: Revisa los pacientes que atenderás hoy.";
+                menu.innerHTML += crearBoton("🩺 Ver Mi Agenda", "alert('Mostrando citas del doctor')");
+                menu.innerHTML += crearBoton("📝 Historias Clínicas", "alert('Acceso a historias')");
+            } 
+            else if (currentUser.rol === 'facturacion') {
+                desc.innerText = "Panel de Recepción: Gestión de pagos y admisiones.";
+                menu.innerHTML += crearBoton("💵 Cobros y Facturas", "alert('Modulo de caja')");
+                menu.innerHTML += crearBoton("👥 Recepción de Pacientes", "alert('Lista de llegada')");
+            } 
+            else if (currentUser.rol === 'admin') {
+                desc.innerText = "Panel de Control Total: Datos globales de la clínica.";
+                menu.innerHTML += crearBoton("📊 Reportes Globales", "alert('Ver todas las citas')");
+                menu.innerHTML += crearBoton("⚙️ Configurar Doctores", "alert('Ajustes de staff')");
+                menu.innerHTML += crearBoton("💰 Balance Financiero", "alert('Ver ganancias')");
+            }
+
+            cambiarVista('dashboard');
+        }
+
+        function crearBoton(texto, accion) {
+            return `<div class="menu-item" onclick="${accion}">
+                        <div style="font-size:30px">🔘</div>
+                        <h3>${texto}</h3>
+                    </div>`;
+        }
+
+        function cambiarVista(id) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + id).classList.add('active');
+        }
+
+        function logout() {
+            currentUser = null;
+            cambiarVista('login');
+        }
+    </script>
+</body>
+</html>
