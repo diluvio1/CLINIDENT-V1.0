@@ -10,6 +10,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
 
 body{
+background:linear-gradient(135deg,#eef2ff,#f0fdfa);
 background:linear-gradient(135deg,#dbeafe,#f0fdfa,#e9d5ff);
 background-size:300% 300%;
 animation:fondoAnimado 12s ease infinite;
@@ -46,8 +47,10 @@ h2{margin-bottom:15px;color:#0f172a;}
 .section{
 background:white;
 padding:25px;
-border-radius:14px;
+border-radius:12px;
+
 margin-bottom:25px;
+box-shadow:0 6px 18px rgba(0,0,0,0.08); 
 
 box-shadow:0 10px 25px rgba(0,0,0,0.08);
 
@@ -69,6 +72,8 @@ label{display:block;margin-bottom:5px;font-size:14px;}
 
 input,select,textarea{
 width:100%;
+padding:9px;
+border-radius:8px;
 padding:10px;
 border-radius:10px;
 border:1px solid #cbd5e1;
@@ -88,9 +93,12 @@ transform:scale(1.02);
 button{
 cursor:pointer;
 border:none;
+border-radius:8px;
+padding:10px 15px;
 border-radius:10px;
 padding:10px 16px;
 font-weight:600;
+transition:.2s;
 margin-right:10px;
 margin-top:10px;
 
@@ -141,12 +149,6 @@ left:100%;
 width:100%;
 border-collapse:collapse;
 margin-top:15px;
-}
-
-.table{
-width:100%;
-border-collapse:collapse;
-margin-top:15px;
 overflow:hidden;
 border-radius:10px;
 }
@@ -169,13 +171,13 @@ transition:all .2s ease;
 background:#f1f5ff;
 transform:scale(1.01);
 }
-.total-box{
-background:#f1f5f9;
-padding:18px;
-border-radius:10px;
-margin-top:18px;
-}
 
+.total-big{
+font-size:22px;
+font-weight:bold;
+color:#16a34a;
+margin-top:8px;
+}
 .total-box{
 background:linear-gradient(135deg,#f1f5f9,#e0f2fe);
 padding:18px;
@@ -324,6 +326,7 @@ margin-bottom:20px;
 <h2>Factura y Pago</h2>
 
 <button class="btn-success" onclick="emitirFactura()">Emitir Factura</button>
+<button class="btn-primary" onclick="registrarPago()">Registrar Pago</button>
 <button class="btn-gray" onclick="verPagos()">Ver Pagos</button>
 
 </div>
@@ -435,9 +438,6 @@ return;
 
 // eliminar del array
 pacientes.splice(index,1);
-
-// actualizar localStorage
-localStorage.setItem("pacientes", JSON.stringify(pacientes));
 
 // recargar lista
 cargarPacientes();
@@ -694,6 +694,7 @@ modalFactura.style.display="none";
 }
 
 function registrarPago() {
+
     if (!facturaGenerada) {
         alert("Primero emita factura");
         return;
@@ -707,6 +708,7 @@ function registrarPago() {
     // Clonamos el contenido pero removemos los botones antes de guardar
     let tempDiv = document.createElement("div");
     tempDiv.innerHTML = contenidoFactura.innerHTML;
+
     let botones = tempDiv.querySelector(".no-print");
     if(botones) botones.remove();
 
@@ -717,27 +719,28 @@ function registrarPago() {
         detalleHTML: tempDiv.innerHTML
     });
 
-    // 🔹 Guardamos pagos en el navegador
+    // Guardamos pagos en el navegador
     localStorage.setItem("pagos", JSON.stringify(pagos));
 
     alert("Pago registrado con éxito");
-    
-    // 🔹 Incrementamos factura
+
+    // Incrementamos número de factura
     numeroFactura++;
 
-    // 🔹 Guardamos el número de factura actual
+    // Guardamos número de factura
     localStorage.setItem("numeroFactura", numeroFactura);
 
-    // 🔹 Limpiar sistema para siguiente paciente
+    // Limpiar sistema para siguiente paciente
     nuevaConsulta();
-    nombre.value = ""; 
+    nombre.value = "";
     documento.value = "";
     document.getElementById("selectPaciente").value = "";
+
     cerrarFactura();
 }
 function verPagos(){
 
-let contenido=`<h2>Historial de Pagos</h2>
+let contenido = `<h2>Historial de Pagos</h2>
 
 <table class="table">
 
@@ -745,42 +748,34 @@ let contenido=`<h2>Historial de Pagos</h2>
 <th>Factura</th>
 <th>Paciente</th>
 <th>Total</th>
-<th>Acciónes</th> </tr>`;
+<th>Acciones</th>
+</tr>`;
 
 pagos.forEach((p, index)=>{
 
-contenido+=`
+contenido += `
 <tr>
 <td>${p.factura}</td>
 <td>${p.paciente}</td>
 <td>$${p.total.toFixed(2)}</td>
 <td>
+<button onclick="verDetalleFactura(${index})" class="btn-primary" style="margin:0;padding:5px 10px;">Ver</button>
 
-<button onclick="verDetalleFactura(${index})"
-class="btn-primary"
-style="margin:0;padding:5px 10px;">
-Ver
-</button>
-
-<button onclick="eliminarFactura(${index})"
-class="btn-danger"
-style="margin:0;padding:5px 10px;">
-Eliminar
-</button>
-
+<button onclick="eliminarFactura(${index})" class="btn-danger" style="margin:0;padding:5px 10px;">Eliminar</button>
 </td>
 </tr>
 `;
+
 });
 
-contenido+=`</table>
+contenido += `</table>
 
 <br>
 
 <button onclick="cerrarPagos()" class="btn-primary">Cerrar</button>`;
 
-contenidoPagos.innerHTML=contenido;
-modalPagos.style.display="flex";
+contenidoPagos.innerHTML = contenido;
+modalPagos.style.display = "flex";
 
 }
 
