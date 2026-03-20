@@ -10,7 +10,7 @@
     --azul-oscuro:#0f172a;
     --azul:#2563eb;
     --azul-claro:#60a5fa;
-    --glass:rgba(255,255,255,0.1);
+    --blanco:#ffffff;
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -26,14 +26,13 @@ body{
 
 /* CARD */
 .card{
-    background:var(--glass);
-    backdrop-filter:blur(15px);
+    background: var(--blanco); /* cuadro blanco */
     padding:40px;
     border-radius:20px;
     width:360px;
     text-align:center;
-    color:white;
-    box-shadow:0 25px 60px rgba(0,0,0,0.5);
+    color: var(--azul-oscuro);
+    box-shadow:0 25px 60px rgba(0,0,0,0.2);
     animation:fadeIn 0.6s ease;
 }
 
@@ -62,11 +61,11 @@ input,select{
     width:100%;
     padding:12px;
     border-radius:10px;
-    border:none;
+    border:1px solid #cbd5e1;
     margin-top:5px;
     outline:none;
-    background:rgba(255,255,255,0.2);
-    color:white;
+    background:#f9fafb; /* input claro */
+    color: var(--azul-oscuro);
 }
 
 select option {
@@ -75,12 +74,13 @@ select option {
 }
 
 input::placeholder{
-    color:#ddd;
+    color:#9ca3af;
 }
 
 /* EFECTO FOCUS */
 input:focus,select:focus{
     box-shadow:0 0 0 2px var(--azul-claro);
+    background:#ffffff;
 }
 
 /* BOTÓN */
