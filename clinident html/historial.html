@@ -16,7 +16,7 @@
     <div class="sidebar">
         <nav>
             <ul>
-                <li><img src="img/logo.png" alt="Logo" style="width:150px;"></li>
+                <li><img src="logo.png" alt="Logo" style="width:150px;"></li>
                 <li><a href="index.html"><button type="button" class="btn-sidebar">Registrar</button></a></li>
                 <li><a href="dashboard.html"><button type="button" class="btn-sidebar">Dashboard</button></a></li>
                 <li><a href="estadisticas.html"><button type="button" class="btn-sidebar">Estadísticas</button></a></li>
@@ -79,6 +79,26 @@
         <div style="display:flex; gap:10px; margin-top:4px;">
             <button onclick="guardarEdicion()" style="flex:1; padding:10px; background:#2D8CF0; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">Guardar</button>
             <button onclick="cerrarModal()"    style="flex:1; padding:10px; background:transparent; color:#aaa; border:1px solid #555; border-radius:5px; cursor:pointer;">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL ELIMINAR -->
+<div id="modalEliminar" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:999; align-items:center; justify-content:center;">
+    <div style="background:#1f1f1f; border:1px solid #555; border-radius:10px; padding:28px; width:340px; display:flex; flex-direction:column; gap:16px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:40px; height:40px; border-radius:50%; background:rgba(74,26,26,0.8); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                🗑️
+            </div>
+            <div>
+                <p style="margin:0; font-size:15px; font-weight:bold; color:white;">Eliminar paciente</p>
+                <p id="nombreEliminar" style="margin:0; font-size:13px; color:#aaa;"></p>
+            </div>
+        </div>
+        <p style="margin:0; font-size:14px; color:#aaa; line-height:1.5;">Esta acción no se puede deshacer. El registro del paciente será eliminado permanentemente.</p>
+        <div style="display:flex; gap:10px; margin-top:4px;">
+            <button onclick="cerrarModalEliminar()" style="flex:1; padding:10px; background:transparent; color:#aaa; border:1px solid #555; border-radius:5px; cursor:pointer; font-size:14px;">Cancelar</button>
+            <button onclick="confirmarEliminar()" style="flex:1; padding:10px; background:rgba(74,26,26,0.8); color:#f87171; border:1px solid #f87171; border-radius:5px; cursor:pointer; font-size:14px; font-weight:bold;">Eliminar</button>
         </div>
     </div>
 </div>
@@ -165,12 +185,26 @@ function guardarEdicion() {
     mostrarPacientes();
 }
 
+let indiceEliminar = null;
+
 function eliminarPaciente(index) {
-    if (confirm("¿Eliminar este paciente?")) {
-        pacientes.splice(index, 1);
-        localStorage.setItem("pacientes", JSON.stringify(pacientes));
-        mostrarPacientes();
-    }
+    indiceEliminar = index;
+    const p = pacientes[index];
+    document.getElementById("nombreEliminar").textContent = p.Nombre + " " + p.Apellido;
+    document.getElementById("modalEliminar").style.display = "flex";
+}
+
+function cerrarModalEliminar() {
+    document.getElementById("modalEliminar").style.display = "none";
+    indiceEliminar = null;
+}
+
+function confirmarEliminar() {
+    if (indiceEliminar === null) return;
+    pacientes.splice(indiceEliminar, 1);
+    localStorage.setItem("pacientes", JSON.stringify(pacientes));
+    cerrarModalEliminar();
+    mostrarPacientes();
 }
 
 function exportarExcel() {
