@@ -1,88 +1,178 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="manifest" href="manifest.json">
-    <meta charset="UTF-8">
-    <title>CLINIDENT | Iniciar Sesión</title>
-    <style>
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #8aa7a6, #3aa6a0); }
-        .card { background: white; padding: 40px; border-radius: 18px; width: 350px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.2); }
-        .input-group { text-align: left; margin-bottom: 15px; }
-        label { font-size: 12px; color: #666; font-weight: bold; }
-        input, select { width: 100%; padding: 11px; border-radius: 6px; border: 1px solid #ddd; margin-top: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 13px; border: none; border-radius: 8px; background: #4a8dc7; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLINIDENT | Iniciar Sesión</title>
+
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --azul-oscuro:#0f172a;
+    --azul:#2563eb;
+    --azul-claro:#60a5fa;
+    --glass:rgba(255,255,255,0.1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: linear-gradient(135deg,#0f172a,#1e3a8a,#2563eb);
+}
+
+/* CARD */
+.card{
+    background:var(--glass);
+    backdrop-filter:blur(15px);
+    padding:40px;
+    border-radius:20px;
+    width:360px;
+    text-align:center;
+    color:white;
+    box-shadow:0 25px 60px rgba(0,0,0,0.5);
+    animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(20px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+.card img{
+    margin-bottom:10px;
+}
+
+/* INPUTS */
+.input-group{
+    text-align:left;
+    margin-bottom:15px;
+}
+
+label{
+    font-size:12px;
+    opacity:0.8;
+    font-weight:600;
+}
+
+input,select{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    margin-top:5px;
+    outline:none;
+    background:rgba(255,255,255,0.2);
+    color:white;
+}
+
+select {
+    color: white;
+    background: rgba(255,255,255,0.2);
+}
+
+/* 👇 ESTA ES LA CLAVE */
+select option {
+    color: black;
+    background: white;
+}
+input::placeholder{
+    color:#ddd;
+}
+
+/* EFECTO FOCUS */
+input:focus,select:focus{
+    box-shadow:0 0 0 2px var(--azul-claro);
+}
+
+/* BOTÓN */
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,var(--azul),var(--azul-claro));
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:15px;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:translateY(-2px) scale(1.03);
+    box-shadow:0 10px 25px rgba(0,0,0,0.4);
+}
+</style>
 </head>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>CLINIDENT | Iniciar Sesión</title>
-    <style>
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #8aa7a6, #3aa6a0); }
-        .card { background: white; padding: 40px; border-radius: 18px; width: 350px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.2); }
-        .input-group { text-align: left; margin-bottom: 15px; }
-        label { font-size: 12px; color: #666; font-weight: bold; }
-        input, select { width: 100%; padding: 11px; border-radius: 6px; border: 1px solid #ddd; margin-top: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 13px; border: none; border-radius: 8px; background: #4a8dc7; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
-    </style>
-</head>
+
 <body>
-    <div class="card">
-        <img src="clinident_logo.png" width="80" alt="Logo">
-        <h2>Iniciar Sesión</h2>
-        <div class="input-group">
-            <label>Usuario</label>
-            <input type="text" id="user-name" placeholder="Tu nombre">
-        </div>
-        <div class="input-group">
-            <label>Contraseña</label>
-            <input type="password" id="user-pass" placeholder="********">
-        </div>
-        <div class="input-group">
-            <label>Acceder como:</label>
-            <select id="user-role">
-                <option value="paciente">Paciente</option>
-                <option value="odontologo">Odontólogo</option>
-                <option value="recepcionista">Recepcionista</option>
-                <option value="Admin">Admin</option>
-            </select>
-        </div>
-        <button onclick="gestionarAcceso()">Entrar</button>
+
+<div class="card">
+    <img src="clinident_logo.png" width="80">
+    <h2>Iniciar Sesión</h2>
+
+    <div class="input-group">
+        <label>Usuario</label>
+        <input type="text" id="user-name" placeholder="Tu nombre">
     </div>
-    <script>
-        function gestionarAcceso() {
-            const user = document.getElementById('user-name').value;
-            const rol = document.getElementById('user-role').value;
-            if (user === "") { alert("Escribe tu nombre"); return; }
-            
-            if (rol === "paciente") window.location.href = "Agendacliente.html";
-            else window.location.href = "odontoloagenda.html";
-        }
-    </script>
-</body>
-</html>
 
-    <script>
-        function gestionarAcceso() {
-            const rol = document.getElementById('user-role').value;
-            const user = document.getElementById('user-name').value;
+    <div class="input-group">
+        <label>Contraseña</label>
+        <input type="password" id="user-pass" placeholder="********">
+    </div>
 
-            if(user === "") { alert("Escribe tu usuario"); return; }
+    <div class="input-group">
+        <label>Acceder como:</label>
+        <select id="user-role">
+            <option value="paciente">Paciente</option>
+            <option value="odontologo">Odontólogo</option>
+            <option value="recepcionista">Recepcionista</option>
+            <option value="admin">Admin</option>
+        </select>
+    </div>
 
-            if (rol === "paciente") {
-                window.location.href = "Agendacliente.html"; 
-            } else {
-                window.location.href = "odontologo.html";
-            }
-        }
-    </script>
-    <script>
+    <button onclick="gestionarAcceso()">Entrar</button>
+</div>
+
+<script>
+function gestionarAcceso(){
+    const user = document.getElementById('user-name').value;
+    const rol = document.getElementById('user-role').value;
+
+    if(user === ""){
+        alert("Escribe tu usuario");
+        return;
+    }
+
+    // REDIRECCIONES
+    if(rol === "paciente"){
+        window.location.href = "Agendacliente.html";
+    } 
+    else if(rol === "odontologo"){
+        window.location.href = "odontologo.html";
+    }
+    else if(rol === "admin"){
+        window.location.href = "admin.html";
+    }
+    else{
+        window.location.href = "odontologo.html";
+    }
+}
+
+// PWA
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js')
+    navigator.serviceWorker.register('sw.js')
     .then(() => console.log('Service Worker registrado'))
-    .catch(error => console.log('Error:', error));
+    .catch(err => console.log('Error:', err));
 }
 </script>
+
 </body>
 </html>
