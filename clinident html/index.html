@@ -81,8 +81,30 @@ form.addEventListener("submit", function(e){
     pacientes.push(nuevoPaciente);
     localStorage.setItem("pacientes", JSON.stringify(pacientes));
     form.reset();
-    alert("Paciente registrado correctamente");
+    mostrarNotificacion("Paciente registrado correctamente");
 });
+function mostrarNotificacion(mensaje) {
+    const notif = document.createElement("div");
+    notif.textContent = mensaje;
+    notif.style.cssText = `
+        position: fixed;
+        top: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(26,74,46,0.95);
+        color: #4ade80;
+        border: 1px solid #4ade80;
+        padding: 14px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        z-index: 9999;
+        transition: opacity 0.5s;
+    `;
+    document.body.appendChild(notif);
+    setTimeout(() => { notif.style.opacity = "0"; }, 2500);
+    setTimeout(() => { notif.remove(); }, 3000);
+}
 </script>
 
 </body>
