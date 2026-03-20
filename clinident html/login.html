@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <title>CLINIDENT | Iniciar Sesión</title>
     <style>
@@ -97,5 +98,12 @@
             }
         }
     </script>
+    <script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js')
+    .then(() => console.log('Service Worker registrado'))
+    .catch(error => console.log('Error:', error));
+}
+</script>
 </body>
 </html>

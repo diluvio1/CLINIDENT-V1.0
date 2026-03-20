@@ -436,9 +436,6 @@ return;
 // eliminar del array
 pacientes.splice(index,1);
 
-// actualizar localStorage
-localStorage.setItem("pacientes", JSON.stringify(pacientes));
-
 // recargar lista
 cargarPacientes();
 

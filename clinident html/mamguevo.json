@@ -1,0 +1,22 @@
+{
+  "name": "CLINIDENT - Sistema Dental",
+  "short_name": "CLINIDENT",
+  "start_url": "login.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#8aa7a6",
+  "theme_color": "#4a8dc7",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "clinident_logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "clinident_logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
