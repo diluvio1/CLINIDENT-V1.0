@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CLINIDENT | Iniciar Sesión</title>
+
+<link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
 <style>
 :root{
     --azul-oscuro:#0f172a;
@@ -68,11 +71,16 @@ input,select{
     color: var(--azul-oscuro);
 }
 
+select {
+    color: white;
+    background: rgba(255,255,255,0.2);
+}
+
+/* 👇 ESTA ES LA CLAVE */
 select option {
     color: black;
     background: white;
 }
-
 input::placeholder{
     color:#9ca3af;
 }
@@ -103,49 +111,51 @@ button:hover{
 }
 </style>
 </head>
-
 <body>
 
-<div class="card">
-    <img src="clinident_logo.png" width="80">
-    <h2>Iniciar Sesión</h2>
+    <div class="card">
+        <img src="clinident_logo.png" width="80" alt="Logo">
+        <h2>Iniciar Sesión</h2>
 
-    <div class="input-group">
-        <label>Usuario</label>
-        <input type="text" id="user-name" placeholder="Tu nombre">
+        <div class="input-group">
+            <label>Usuario</label>
+            <input type="text" id="user-name" placeholder="Tu nombre">
+        </div>
+
+        <div class="input-group">
+            <label>Contraseña</label>
+            <input type="password" id="user-pass" placeholder="********">
+        </div>
+
+        <div class="input-group">
+            <label>Acceder como:</label>
+            <select id="user-role">
+                <option value="paciente">Paciente </option>
+                <option value="odontologo">Odontologo </option>
+                <option value="recepcion">recepcion </option>
+                <option value="admin">Administrador (Mando Total)</option>
+            </select>
+        </div>
+        <button onclick="gestionarAcceso()">Entrar</button>
     </div>
 
-    <div class="input-group">
-        <label>Contraseña</label>
-        <input type="password" id="user-pass" placeholder="********">
-    </div>
+    
 
-    <div class="input-group">
-        <label>Acceder como:</label>
-        <select id="user-role">
-            <option value="paciente">Paciente</option>
-            <option value="odontologo">Odontólogo</option>
-            <option value="recepcionista">Recepcionista</option>
-            <option value="admin">Admin</option>
-        </select>
-    </div>
+    <script>
+        function gestionarAcceso() {
+            const user = document.getElementById('user-name').value;
+            const pass = document.getElementById('user-pass').value;
+            const rol = document.getElementById('user-role').value;
 
-    <button onclick="gestionarAcceso()">Entrar</button>
-</div>
+            // 1. Verificamos que no esté vacío
+            if (user === "" || pass === "") {
+                alert("⚠️ Por favor escribe tu usuario y contraseña");
+                return;
+            }
 
-<script>
-function gestionarAcceso(){
-    const user = document.getElementById('user-name').value;
-    const rol = document.getElementById('user-role').value;
-
-    if(user === ""){
-        alert("Escribe tu usuario");
-        return;
-    }
-
-    // REDIRECCIONES POR ROL
+    // REDIRECCIONES
     if(rol === "paciente"){
-        window.location.href = "Agendacliente.html";
+        window.location.href = "agenda.html";
     } 
     else if(rol === "odontologo"){
         window.location.href = "odontologo.html";
@@ -156,6 +166,13 @@ function gestionarAcceso(){
     else{
         window.location.href = "odontologo.html";
     }
+}
+
+// PWA
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+    .then(() => console.log('Service Worker registrado'))
+    .catch(err => console.log('Error:', err));
 }
 </script>
 
