@@ -4,10 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CLINIDENT | Iniciar Sesión</title>
-
-<link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-
 <style>
 :root{
     --azul-oscuro:#0f172a;
@@ -72,16 +69,11 @@ input,select{
     color:white;
 }
 
-select {
-    color: white;
-    background: rgba(255,255,255,0.2);
-}
-
-/* 👇 ESTA ES LA CLAVE */
 select option {
     color: black;
     background: white;
 }
+
 input::placeholder{
     color:#ddd;
 }
@@ -151,7 +143,7 @@ function gestionarAcceso(){
         return;
     }
 
-    // REDIRECCIONES
+    // REDIRECCIONES POR ROL
     if(rol === "paciente"){
         window.location.href = "Agendacliente.html";
     } 
@@ -164,13 +156,6 @@ function gestionarAcceso(){
     else{
         window.location.href = "odontologo.html";
     }
-}
-
-// PWA
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-    .then(() => console.log('Service Worker registrado'))
-    .catch(err => console.log('Error:', err));
 }
 </script>
 
