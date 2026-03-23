@@ -119,14 +119,13 @@ a{
 </div>
 <script>
 function validarAcceso(event) {
-    event.preventDefault(); // Detiene el formulario
+    event.preventDefault();
 
-    // 1. Verificamos que los IDs existan
     const inputCorreo = document.getElementById('correo');
     const inputPass = document.getElementById('pass');
 
     if (!inputCorreo || !inputPass) {
-        alert("Error: No se encuentran los campos en el HTML. Revisa que tus input tengan id='correo' e id='pass'");
+        alert("Error: No se encuentran los campos.");
         return;
     }
 
@@ -134,32 +133,28 @@ function validarAcceso(event) {
     datos.append('usuario', inputCorreo.value);
     datos.append('password', inputPass.value);
 
-    // 2. Enviamos al servidor
-    fetch('/validar_login', { 
+    fetch('/validar_login', {
         method: 'POST',
         body: datos
     })
-    .then(response => response.text())
-    .then(resultado => {
-        const respuesta = resultado.trim();
-        console.log("Respuesta del servidor:", respuesta);
+    .then(response => response.json())  // <- Cambiado a JSON
+    .then(data => {
+        console.log("Respuesta del servidor:", data);
 
-        // 3. Lógica de redirección estricta
-        if (respuesta === "success") {
-            alert("¡Bienvenido!");
-            window.location.href = "principal.html";
-        } else if (respuesta === "incorrecto") {
+        if (data.status === 'success') {
+            alert("¡Bienvenido, " + data.nombre + "!");
+            window.location.href = data.redirect;  // <- Flask decide a dónde va
+        } else if (data.msg === 'incorrecto') {
             alert("❌ Contraseña incorrecta.");
-        } else if (respuesta === "no_existe") {
+        } else if (data.msg === 'no_existe') {
             alert("❌ Este usuario no está registrado.");
         } else {
-            // Esto saldrá si el PHP tiene algún error de código
-            alert("Respuesta inesperada: " + respuesta);
+            alert("Error: " + data.msg);
         }
     })
     .catch(error => {
         console.error(error);
-        alert("Error de conexión con validar_login.php");
+        alert("Error de conexión con el servidor.");
     });
 }
 </script>
