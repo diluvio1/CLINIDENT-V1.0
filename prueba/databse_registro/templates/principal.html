@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f7f6;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-direction: column;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .btn-agenda { background-color: #4a90e2; }
+        .btn-historial { background-color: #50c878; }
+        .btn-facturacion { background-color: #f39c12; }
+
+    </style>
+</head>
+<body>
+
+<div class="button-group">
+
+<button class="btn btn-odontologo" onclick="window.location.href='odontologo.html'">
+📜 Registro
+</button>
+
+<button class="btn btn-agenda" onclick="window.location.href='Agenda.html'">
+📅 Agenda
+</button>
+
+<button class="btn btn-facturacion" onclick="window.location.href='facturacion.html'">
+💰 Facturación
+</button>
+
+<button class="btn btn-historial" onclick="alert('Módulo de Historial no disponible')">
+                📜 Historial
+</button>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Nueva contraseña</title>
+
+<style>
+body{
+font-family:Arial;
+background:linear-gradient(135deg,#8aa7a6,#3aa6a0);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.card{
+background:white;
+padding:40px;
+border-radius:15px;
+width:340px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+input{
+width:100%;
+padding:11px;
+margin-top:10px;
+margin-bottom:15px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#4a8dc7;
+border:none;
+color:white;
+border-radius:8px;
+font-weight:bold;
+}
+
+.error{color:red;font-size:13px;}
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Crear nueva contraseña</h2>
+
+<form action="login.html" onsubmit="return validarPassword()">
+
+<input type="password" id="p1" placeholder="Nueva contraseña">
+
+<input type="password" id="p2" placeholder="Confirmar contraseña">
+
+<div id="error" class="error"></div>
+
+<button type="submit">Guardar contraseña</button>
+
+</form>
+
+</div>
+
+<script>
+
+function validarPassword(){
+
+let p1=document.getElementById("p1").value
+let p2=document.getElementById("p2").value
+
+if(p1!==p2){
+
+document.getElementById("error").innerText="Las contraseñas no coinciden"
+return false
+
+}
+
+return true
+
+}
+
+</script>
+
+</body>
+</html>

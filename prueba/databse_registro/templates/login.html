@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>CLINIDENT | Iniciar Sesión</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background: linear-gradient(135deg,#8aa7a6,#3aa6a0);
+}
+
+.card{
+    background:white;
+    padding:40px;
+    border-radius:18px;
+    width:340px;
+    text-align:center;
+    box-shadow:0 15px 40px rgba(0,0,0,0.2);
+}
+
+.logo{
+    width:90px;
+    margin-bottom:10px;
+}
+
+h2{
+    color:#3d7fb1;
+    margin-bottom:25px;
+}
+
+.input-group{
+    text-align:left;
+    margin-bottom:18px;
+}
+
+label{
+    font-size:12px;
+    color:#666;
+}
+
+input{
+    width:100%;
+    padding:11px;
+    border-radius:6px;
+    border:1px solid #ddd;
+    margin-top:5px;
+    font-size:13px;
+}
+
+button{
+    width:100%;
+    padding:13px;
+    border:none;
+    border-radius:8px;
+    background:#4a8dc7;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+button:hover{
+    background:#3973a5;
+}
+
+.extra{
+    margin-top:15px;
+    font-size:12px;
+    color:#666;
+}
+
+a{
+    color:#3d7fb1;
+    text-decoration:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<img src="clinident_logo.png" width="100" height="100">
+
+<h2>Iniciar Sesión</h2>
+
+<form id="formLogin" onsubmit="validarAcceso(event)">
+
+<div class="input-group">
+    <label>Correo electrónico</label>
+    <input type="text" id="correo" placeholder="nombre@correo.com">
+</div>
+
+<div class="input-group">
+    <label>Contraseña</label>
+    <input type="password" id="pass" placeholder="********">
+</div>
+
+
+<button type="submit">Entrar</button>
+
+</form>
+
+<div class="links">
+    <a href="recuperar.html">¿Olvidaste tu contraseña?</a>
+    <a href="/registro">Crear cuenta</a> </div>
+
+</div>
+
+</div>
+<script>
+function validarAcceso(event) {
+    event.preventDefault(); // Detiene el formulario
+
+    // 1. Verificamos que los IDs existan
+    const inputCorreo = document.getElementById('correo');
+    const inputPass = document.getElementById('pass');
+
+    if (!inputCorreo || !inputPass) {
+        alert("Error: No se encuentran los campos en el HTML. Revisa que tus input tengan id='correo' e id='pass'");
+        return;
+    }
+
+    const datos = new FormData();
+    datos.append('usuario', inputCorreo.value);
+    datos.append('password', inputPass.value);
+
+    // 2. Enviamos al servidor
+    fetch('/validar_login', { 
+        method: 'POST',
+        body: datos
+    })
+    .then(response => response.text())
+    .then(resultado => {
+        const respuesta = resultado.trim();
+        console.log("Respuesta del servidor:", respuesta);
+
+        // 3. Lógica de redirección estricta
+        if (respuesta === "success") {
+            alert("¡Bienvenido!");
+            window.location.href = "principal.html";
+        } else if (respuesta === "incorrecto") {
+            alert("❌ Contraseña incorrecta.");
+        } else if (respuesta === "no_existe") {
+            alert("❌ Este usuario no está registrado.");
+        } else {
+            // Esto saldrá si el PHP tiene algún error de código
+            alert("Respuesta inesperada: " + respuesta);
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        alert("Error de conexión con validar_login.php");
+    });
+}
+</script>
+</body>
+</html>

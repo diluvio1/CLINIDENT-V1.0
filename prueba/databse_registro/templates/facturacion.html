@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLINIDENT - Sistema Dental</title>
+
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
+
+body{
+background:linear-gradient(135deg,#eef2ff,#f0fdfa);
+padding:30px;
+color:#1e293b;
+}
+
+.container{max-width:1100px;margin:auto;}
+
+.header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:25px;
+}
+
+.header img{width:140px;}
+
+.header h1{
+flex:1;
+text-align:center;
+color:#1e3a8a;
+}
+
+h2{margin-bottom:15px;color:#0f172a;}
+
+.section{
+background:white;
+padding:25px;
+border-radius:12px;
+margin-bottom:25px;
+box-shadow:0 6px 18px rgba(0,0,0,0.08); 
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:18px;
+margin-bottom:18px;
+}
+
+label{display:block;margin-bottom:5px;font-size:14px;}
+
+input,select,textarea{
+width:100%;
+padding:9px;
+border-radius:8px;
+border:1px solid #cbd5e1;
+margin-bottom:8px;
+}
+
+button{
+cursor:pointer;
+border:none;
+border-radius:8px;
+padding:10px 15px;
+font-weight:600;
+transition:.2s;
+margin-right:10px;
+margin-top:10px;
+}
+
+.btn-primary{background:#1e40af;color:white;}
+.btn-gray{background:#e2e8f0;}
+.btn-danger{background:#dc2626;color:white;}
+.btn-success{background:#16a34a;color:white;}
+
+.table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+.table th,.table td{
+padding:10px;
+border-bottom:1px solid #e2e8f0;
+}
+
+.total-box{
+background:#f1f5f9;
+padding:18px;
+border-radius:10px;
+margin-top:18px;
+}
+
+.total-big{
+font-size:22px;
+font-weight:bold;
+color:#16a34a;
+margin-top:8px;
+}
+
+.alert{
+background:#dcfce7;
+color:#166534;
+padding:10px;
+border-radius:8px;
+margin-top:15px;
+display:none;
+}
+
+.modal-bg{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.5);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.modal{
+background:white;
+width:750px;
+padding:25px;
+border-radius:12px;
+max-height:90vh;
+overflow:auto;
+}
+
+.factura-header{
+background:#dbeafe;
+padding:20px;
+border-radius:10px;
+text-align:center;
+margin-bottom:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<img src="logo-removebg-preview.png">
+<h1>CLINIDENT - Sistema Dental</h1>
+<img src="mascota-removebg-preview.png">
+</div>
+
+<div class="section">
+
+<h2>Datos del Paciente</h2>
+
+<div class="grid">
+
+<div>
+<label>Seleccionar Paciente</label>
+<select id="selectPaciente" onchange="seleccionarPaciente()">
+<option value="">Seleccione</option>
+</select>
+</div>
+
+<div>
+<label>Nombre</label>
+<input id="nombre">
+</div>
+
+<div>
+<label>Documento</label>
+<input id="documento">
+</div>
+
+<div>
+<label>Odontólogo</label>
+<select id="doctor" onchange="actualizarTratamientos()">
+<option>Dra. Paula Ríos - Ortodoncia</option>
+<option>Dr. Carlos Méndez - Endodoncia</option>
+<option>Dra. Laura Sánchez - Odontología General</option>
+</select>
+</div>
+
+</div>
+
+<button class="btn-gray" onclick="crearPaciente()">Nuevo Paciente</button>
+<button class="btn-primary" onclick="crearConsulta()">Crear Consulta</button>
+<button class="btn-danger" onclick="nuevaConsulta()">Nueva Consulta</button>
+
+<div class="alert" id="consultaOK">✔ Consulta Activa</div>
+
+<label style="margin-top:15px;">Diagnóstico</label>
+<textarea id="diagnostico" rows="3"></textarea>
+
+</div>
+
+<div class="section">
+
+<h2>Tratamientos</h2>
+
+<select id="listaTratamientos"></select>
+<button class="btn-primary" onclick="agregarTratamiento()">Agregar</button>
+
+<table class="table">
+
+<thead>
+<tr>
+<th>Tratamiento</th>
+<th>Precio</th>
+<th>Cant</th>
+<th>Subtotal</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody id="tabla"></tbody>
+
+</table>
+
+<div class="total-box">
+
+<label>Descuento (%)</label>
+<input type="number" id="descuento" value="0" min="0" max="100" oninput="calcularTotal()">
+
+<label>Impuesto (%)</label>
+<input type="number" id="impuesto" value="0" min="0" max="100" oninput="calcularTotal()">
+
+<p>Subtotal: <strong id="subtotal">$0.00</strong></p>
+
+<p class="total-big">TOTAL: $<span id="total">0.00</span></p>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>Factura y Pago</h2>
+
+<button class="btn-success" onclick="emitirFactura()">Emitir Factura</button>
+<button class="btn-primary" onclick="registrarPago()">Registrar Pago</button>
+<button class="btn-gray" onclick="verPagos()">Ver Pagos</button>
+
+</div>
+
+<div class="modal-bg" id="modalFactura">
+<div class="modal" id="contenidoFactura"></div>
+</div>
+
+<div class="modal-bg" id="modalPagos">
+<div class="modal" id="contenidoPagos"></div>
+</div>
+
+</div>
+
+<script>
+
+let pacientes=[
+{nombre:"Juan Pérez",documento:"87654321"},
+{nombre:"María López",documento:"12345678"},
+{nombre:"Carlos Torres",documento:"99887766"}
+];
+
+let tratamientos=[];
+let consultaActiva=false;
+let totalFinal=0;
+let facturaGenerada=false;
+let pagos=[];
+let numeroFactura=1;
+
+const tratamientosDB={
+"Dra. Paula Ríos - Ortodoncia":[
+{nombre:"Consulta Ortodoncia",precio:75},
+{nombre:"Brackets Metálicos",precio:300},
+{nombre:"Brackets Estéticos",precio:450},
+{nombre:"Retenedor",precio:120},
+{nombre:"Control Mensual",precio:40}
+],
+"Dr. Carlos Méndez - Endodoncia":[
+{nombre:"Endodoncia Unirradicular",precio:200},
+{nombre:"Endodoncia Multirradicular",precio:350},
+{nombre:"Retratamiento",precio:280},
+{nombre:"Radiografía",precio:30}
+],
+"Dra. Laura Sánchez - Odontología General":[
+{nombre:"Consulta General",precio:50},
+{nombre:"Limpieza Dental",precio:60},
+{nombre:"Resina Dental",precio:90},
+{nombre:"Extracción Simple",precio:110},
+{nombre:"Blanqueamiento",precio:250}
+]
+};
+
+function cargarPacientes(){
+let select=document.getElementById("selectPaciente");
+select.innerHTML='<option value="">Seleccione</option>';
+pacientes.forEach((p,i)=>{
+select.innerHTML+=`<option value="${i}">${p.nombre}</option>`;
+});
+}
+
+function seleccionarPaciente(){
+let index=document.getElementById("selectPaciente").value;
+if(index==="")return;
+let p=pacientes[index];
+nombre.value=p.nombre;
+documento.value=p.documento;
+}
+
+function crearPaciente(){
+let nom=nombre.value.trim();
+let doc=documento.value.trim();
+
+if(nom==""||doc==""){
+alert("Ingrese nombre y documento");
+return;
+}
+
+if(pacientes.some(p=>p.documento==doc)){
+alert("Paciente ya registrado");
+return;
+}
+
+pacientes.push({nombre:nom,documento:doc});
+cargarPacientes();
+alert("Paciente agregado");
+}
+
+function crearConsulta(){
+if(nombre.value==""||documento.value==""){
+alert("Seleccione paciente");
+return;
+}
+consultaActiva=true;
+document.getElementById("consultaOK").style.display="block";
+}
+
+function nuevaConsulta(){
+consultaActiva=false;
+facturaGenerada=false;
+tratamientos=[];
+renderTabla();
+document.getElementById("consultaOK").style.display="none";
+diagnostico.value="";
+}
+
+function actualizarTratamientos(){
+let doctor=document.getElementById("doctor").value;
+let lista=document.getElementById("listaTratamientos");
+lista.innerHTML="";
+tratamientosDB[doctor].forEach(t=>{
+lista.innerHTML+=`<option value="${t.precio}">${t.nombre}</option>`;
+});
+}
+
+function agregarTratamiento(){
+
+if(!consultaActiva){
+alert("Primero cree una consulta");
+return;
+}
+
+let lista=document.getElementById("listaTratamientos");
+
+let nombre=lista.options[lista.selectedIndex].text;
+let precio=parseFloat(lista.value);
+
+tratamientos.push({nombre,precio,cantidad:1});
+
+renderTabla();
+calcularTotal();
+
+}
+
+function renderTabla(){
+
+let tabla=document.getElementById("tabla");
+tabla.innerHTML="";
+
+tratamientos.forEach((t,i)=>{
+
+let subtotal=t.precio*t.cantidad;
+
+tabla.innerHTML+=`
+<tr>
+<td>${t.nombre}</td>
+<td>$${t.precio.toFixed(2)}</td>
+<td><input type="number" value="${t.cantidad}" min="1"
+onchange="cambiarCantidad(${i},this.value)"></td>
+<td>$${subtotal.toFixed(2)}</td>
+<td><button onclick="eliminar(${i})">X</button></td>
+</tr>
+`;
+
+});
+
+calcularTotal();
+
+}
+
+function cambiarCantidad(i,val){
+let cantidad=parseInt(val);
+if(isNaN(cantidad)||cantidad<1){cantidad=1;}
+tratamientos[i].cantidad=cantidad;
+renderTabla();
+}
+
+function eliminar(i){
+tratamientos.splice(i,1);
+renderTabla();
+}
+
+function calcularTotal(){
+
+let subtotalCalc=0;
+
+tratamientos.forEach(t=>{
+subtotalCalc+=t.precio*t.cantidad;
+});
+
+let descuentoPorc=Math.min(Math.max(parseFloat(document.getElementById("descuento").value)||0,0),100);
+let impuestoPorc=Math.min(Math.max(parseFloat(document.getElementById("impuesto").value)||0,0),100);
+
+let descuento=subtotalCalc*(descuentoPorc/100);
+let base=subtotalCalc-descuento;
+let impuesto=base*(impuestoPorc/100);
+
+totalFinal=base+impuesto;
+
+document.getElementById("subtotal").innerText="$"+subtotalCalc.toFixed(2);
+document.getElementById("total").innerText=totalFinal.toFixed(2);
+
+}
+
+function emitirFactura(){
+
+if(!consultaActiva){
+alert("Primero cree una consulta");
+return;
+}
+
+if(tratamientos.length==0){
+alert("No hay tratamientos");
+return;
+}
+
+let tablaTratamientos="";
+
+tratamientos.forEach(t=>{
+
+let sub=t.precio*t.cantidad;
+
+tablaTratamientos+=`
+<tr>
+<td>${t.nombre}</td>
+<td>${t.cantidad}</td>
+<td>$${t.precio}</td>
+<td>$${sub}</td>
+</tr>
+`;
+
+});
+
+let doctorSeleccionado = document.getElementById("doctor").value;
+
+contenidoFactura.innerHTML=`
+
+<div class="factura-header">
+<h2>CLINIDENT</h2>
+<p>Factura #${numeroFactura}</p>
+</div>
+
+<p><strong>Paciente:</strong> ${nombre.value}</p>
+<p><strong>Documento:</strong> ${documento.value}</p>
+<p><strong>Odontólogo:</strong> ${doctorSeleccionado}</p>
+
+<hr>
+
+<table class="table">
+
+<tr>
+<th>Tratamiento</th>
+<th>Cantidad</th>
+<th>Precio</th>
+<th>Subtotal</th>
+</tr>
+
+${tablaTratamientos}
+
+</table>
+
+<h2>Total: $${totalFinal.toFixed(2)}</h2>
+
+<button onclick="cerrarFactura()" class="btn-primary">Cerrar</button>
+
+`;
+
+modalFactura.style.display="flex";
+
+facturaGenerada=true;
+
+}
+
+function cerrarFactura(){
+modalFactura.style.display="none";
+}
+
+function registrarPago(){
+
+if(!facturaGenerada){
+alert("Primero emita factura");
+return;
+}
+
+if(pagos.some(p=>p.factura==numeroFactura)){
+alert("Factura ya pagada");
+return;
+}
+
+pagos.push({
+factura:numeroFactura,
+paciente:nombre.value,
+total:totalFinal
+});
+
+numeroFactura++;
+facturaGenerada=false;
+
+alert("Pago registrado");
+
+}
+
+function verPagos(){
+
+let contenido=`<h2>Historial de Pagos</h2>
+
+<table class="table">
+
+<tr>
+<th>Factura</th>
+<th>Paciente</th>
+<th>Total</th>
+</tr>`;
+
+pagos.forEach(p=>{
+
+contenido+=`
+<tr>
+<td>${p.factura}</td>
+<td>${p.paciente}</td>
+<td>$${p.total.toFixed(2)}</td>
+</tr>
+`;
+
+});
+
+contenido+=`</table>
+
+<br>
+
+<button onclick="cerrarPagos()" class="btn-primary">Cerrar</button>`;
+
+contenidoPagos.innerHTML=contenido;
+modalPagos.style.display="flex";
+
+}
+
+function cerrarPagos(){
+modalPagos.style.display="none";
+}
+
+actualizarTratamientos();
+cargarPacientes();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>CLINIDENT | Verificación</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#0f2e4d;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.card{
+background:white;
+padding:40px;
+border-radius:12px;
+text-align:center;
+width:320px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:15px;
+border:1px solid #ccc;
+border-radius:6px;
+}
+
+button{
+margin-top:20px;
+padding:10px;
+width:100%;
+background:#0f2e4d;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#164a78;
+}
+
+.error{
+color:red;
+margin-top:10px;
+display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Código de verificación</h2>
+
+<p>Ingresa el código enviado</p>
+
+<form action="nueva_contraseña.html"></form>
+<input type="text" id="codigo" placeholder="Código de 6 dígitos">
+
+<button onclick="verificarCodigo()">Verificar</button>
+
+<p id="error" class="error">Código incorrecto</p>
+
+</div>
+
+<script>
+
+function verificarCodigo(){
+
+let codigoIngresado = document.getElementById("codigo").value
+let codigoCorrecto = "123456"
+
+if(codigoIngresado === codigoCorrecto){
+
+window.location.href = "nueva_contraseña.html"
+
+}else{
+
+document.getElementById("error").style.display = "block"
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
