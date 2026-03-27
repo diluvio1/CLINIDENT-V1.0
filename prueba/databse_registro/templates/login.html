@@ -5,83 +5,106 @@
 <title>CLINIDENT | Iniciar Sesión</title>
 
 <style>
+:root{
+    --azul-oscuro:#0f172a;
+    --azul:#2563eb;
+    --azul-claro:#60a5fa;
+    --blanco:#ffffff;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-    margin:0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family:'Plus Jakarta Sans',sans-serif;
     height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-
-    background: linear-gradient(135deg,#8aa7a6,#3aa6a0);
+    background: linear-gradient(135deg,#0f172a,#1e3a8a,#2563eb);
 }
 
+/* CARD */
 .card{
-    background:white;
+    background: var(--blanco); /* cuadro blanco */
     padding:40px;
-    border-radius:18px;
-    width:340px;
+    border-radius:20px;
+    width:360px;
     text-align:center;
-    box-shadow:0 15px 40px rgba(0,0,0,0.2);
+    color: var(--azul-oscuro);
+    box-shadow:0 25px 60px rgba(0,0,0,0.2);
+    animation:fadeIn 0.6s ease;
 }
 
-.logo{
-    width:90px;
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(20px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+.card img{
     margin-bottom:10px;
 }
 
-h2{
-    color:#3d7fb1;
-    margin-bottom:25px;
-}
-
+/* INPUTS */
 .input-group{
     text-align:left;
-    margin-bottom:18px;
+    margin-bottom:15px;
 }
 
 label{
     font-size:12px;
-    color:#666;
+    opacity:0.8;
+    font-weight:600;
 }
 
-input{
+input,select{
     width:100%;
-    padding:11px;
-    border-radius:6px;
-    border:1px solid #ddd;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #cbd5e1;
     margin-top:5px;
-    font-size:13px;
+    outline:none;
+    background:#f9fafb; /* input claro */
+    color: var(--azul-oscuro);
 }
 
+select {
+    color: white;
+    background: rgba(255,255,255,0.2);
+}
+
+/* 👇 ESTA ES LA CLAVE */
+select option {
+    color: black;
+    background: white;
+}
+input::placeholder{
+    color:#9ca3af;
+}
+
+/* EFECTO FOCUS */
+input:focus,select:focus{
+    box-shadow:0 0 0 2px var(--azul-claro);
+    background:#ffffff;
+}
+
+/* BOTÓN */
 button{
     width:100%;
-    padding:13px;
+    padding:14px;
     border:none;
-    border-radius:8px;
-    background:#4a8dc7;
+    border-radius:12px;
+    background:linear-gradient(135deg,var(--azul),var(--azul-claro));
     color:white;
-    font-weight:bold;
+    font-weight:700;
     cursor:pointer;
-    margin-top:10px;
+    margin-top:15px;
+    transition:0.3s;
 }
 
 button:hover{
-    background:#3973a5;
+    transform:translateY(-2px) scale(1.03);
+    box-shadow:0 10px 25px rgba(0,0,0,0.4);
 }
-
-.extra{
-    margin-top:15px;
-    font-size:12px;
-    color:#666;
-}
-
-a{
-    color:#3d7fb1;
-    text-decoration:none;
-}
-
 </style>
 </head>
 

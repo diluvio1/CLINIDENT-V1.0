@@ -9,7 +9,7 @@ CORS(app)
 # --- 1. CONFIGURACIÓN DE LA BASE DE DATOS ---
 DB_CONFIG = {
     'host': 'localhost',
-    'port': 3306,
+    'port': 3307,
     'user': 'root',
     'password': '',
     'database': 'clinident',
@@ -78,9 +78,9 @@ def validar_login():
             if bcrypt.checkpw(password_escrita.encode('utf-8'), hash_almacenado):
                 rol = usuario['rol']
 
-                if rol in [3, 4]:
+                if rol in [4]:
                     redirect_url = '/agenda'
-                elif rol in [1, 2]:
+                elif rol in [1, 2, 3]:
                     redirect_url = '/odontologo'
                 else:
                     redirect_url = '/principal'  # Los otros roles por ahora van aquí
@@ -108,10 +108,10 @@ def registrar():
     email    = datos.get('email', '').strip()
     telefono = datos.get('telefono', '').strip()
     password = datos.get('password', '')
-    rol      = datos.get('rol', 4)
+    rol     = datos.get('rol', 3)
 
     if rol not in [1, 2, 3, 4]:
-        rol = 4
+        rol = 3
 
     hash_pass = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
