@@ -19,14 +19,41 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-    font-family:'Plus Jakarta Sans',sans-serif;
+background: linear-gradient(
+    270deg,
+    #1d1d63,
+    #1e3a8a,
+    #0084ff,
+    #1e3a8a
+);
+background-size: 300% 300%;
+animation: fondoAnimado 14s ease-in-out infinite;
+color:#1e293b;
+}
+body{
     height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    background: linear-gradient(135deg,#0f172a,#1e3a8a,#2563eb);
+
+    background: linear-gradient(
+        270deg,
+        #1d1d63,
+        #1e3a8a,
+        #0084ff,
+        #1e3a8a
+    );
+    background-size: 300% 300%;
+    animation: fondoAnimado 14s ease-in-out infinite;
+
+    color:#1e293b;
 }
 
+@keyframes fondoAnimado{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
 /* CARD */
 .card{
     background: var(--blanco); /* cuadro blanco */
@@ -90,6 +117,23 @@ input:focus,select:focus{
     box-shadow:0 0 0 2px var(--azul-claro);
     background:#ffffff;
 }
+.crear-cuenta{
+    margin-top:15px;
+    font-size:13px;
+    color:#64748b;
+    cursor:pointer;
+}
+
+.crear-cuenta span{
+    color: var(--azul);
+    font-weight:600;
+    transition:0.3s;
+}
+
+.crear-cuenta span:hover{
+    text-decoration:underline;
+    opacity:0.8;
+}
 
 /* BOTÓN */
 button{
@@ -133,10 +177,13 @@ button:hover{
                 <option value="paciente">Paciente </option>
                 <option value="odontologo">Odontologo </option>
                 <option value="recepcion">recepcion </option>
-                <option value="admin">Administrador (Mando Total)</option>
+                <option value="admin">Administrador </option>
             </select>
         </div>
         <button onclick="gestionarAcceso()">Entrar</button>
+        <p class="crear-cuenta" onclick="irARegistro()">
+            ¿No tienes cuenta? <span>Créala aquí</span>
+        </p>
     </div>
 
     
@@ -173,6 +220,11 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js')
     .then(() => console.log('Service Worker registrado'))
     .catch(err => console.log('Error:', err));
+}
+</script>
+<script>
+function irARegistro(){
+    window.location.href = "registro.html";
 }
 </script>
 
