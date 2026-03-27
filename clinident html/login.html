@@ -7,7 +7,7 @@
 
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root{
     --azul-oscuro:#0f172a;
@@ -17,6 +17,9 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
+body{
+    font-family: 'Inter', sans-serif;
+}
 
 body{
 background: linear-gradient(
@@ -33,6 +36,25 @@ color:#1e293b;
 body{
     height:100vh;
     display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background: linear-gradient(
+        270deg,
+        #1d1d63,
+        #1e3a8a,
+        #0084ff,
+        #1e3a8a
+    );
+    background-size: 300% 300%;
+    animation: fondoAnimado 14s ease-in-out infinite;
+
+    color:#1e293b;
+}
+body{
+    height:100vh;
+    display:flex;
+    flex-direction:column; /* 👈 CLAVE */
     justify-content:center;
     align-items:center;
 
@@ -153,9 +175,34 @@ button:hover{
     transform:translateY(-2px) scale(1.03);
     box-shadow:0 10px 25px rgba(0,0,0,0.4);
 }
+.header{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:20px; /* espacio entre logo, texto y mascota */
+    margin-bottom:30px; /* separación del login */
+}
+
+.header img{
+    width:150px;
+}
+
+.header h1{
+    font-family: 'Playfair Display', serif;
+    color:white;
+    font-weight:800;
+    letter-spacing:-1px;
+    font-size:32px;
+    text-shadow: 0 5px 20px rgba(255,255,255,0.2);
+}
 </style>
 </head>
 <body>
+    <div class="header">
+        <img src="clinident_logo.png">
+            <h1>CLINIDENT</h1>
+        <img src="mascota.png">
+    </div>
 
     <div class="card">
         <img src="clinident_logo.png" width="80" alt="Logo">
