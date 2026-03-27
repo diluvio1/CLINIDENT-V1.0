@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLINIDENT | Panel Médico</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #0052FF;
+            --bg-doctor: #eceff1;
+            --card-white: #ffffff;
+            --success: #10b981;
+        }
+
+        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-doctor); color: var(--primary); }
+
+        .navbar { background: var(--primary); padding: 15px 60px; display: flex; justify-content: space-between; align-items: center; color: white; }
+
+        .container { max-width: 1200px; margin: 40px auto; padding: 20px; }
+
+        .header-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+
+        .agenda-table { width: 100%; background: white; border-radius: 15px; border-collapse: collapse; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .agenda-table th { background: #f8fafc; padding: 18px; text-align: left; color: #64748b; font-size: 0.85rem; text-transform: uppercase; }
+        .agenda-table td { padding: 18px; border-bottom: 1px solid #f1f5f9; }
+
+        .btn-atender { background: var(--success); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+        .btn-atender:hover { background: #059669; transform: scale(1.05); }
+
+        /* Estilos del Modal (Ventana de Diagnóstico) */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+        .modal-content { background: white; margin: 10% auto; padding: 30px; border-radius: 20px; width: 500px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); }
+        
+        textarea { width: 100%; height: 100px; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-top: 10px; font-family: inherit; box-sizing: border-box; resize: none; }
+        .btn-guardar-ficha { background: var(--accent); color: white; border: none; padding: 12px; width: 100%; border-radius: 10px; margin-top: 20px; font-weight: 700; cursor: pointer; }
+        
+        .refresh-btn { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div style="font-weight: 800; font-size: 22px;">CLINIDENT <span>| Portal Médico</span></div>
+        <div id="reloj" style="font-weight: 600; opacity: 0.8;"></div>
+    </nav>
+
+    <div class="container">
+        <div class="header-panel">
+            <h1>Agenda de Consultas</h1>
+            <button class="refresh-btn" onclick="cargarAgenda()">🔄 Actualizar Citas</button>
+        </div>
+
+        <table class="agenda-table">
+            <thead>
+                <tr>
+                    <th>Hora</th>
+                    <th>Paciente</th>
+                    <th>Especialista</th>
+                    <th>Fecha</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-body"></tbody>
+        </table>
+    </div>
+
+    <div id="modalDiagnostico" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-top:0; color:var(--primary);">Ficha de Atención</h2>
+            <p id="paciente-nombre" style="font-weight: 800; color: var(--accent);"></p>
+            
+            <label><b>Diagnóstico:</b></label>
+            <textarea id="diag" placeholder="Ej: Caries profunda en molar 34..."></textarea>
+            
+            <label style="display:block; margin-top:15px;"><b>Tratamiento:</b></label>
+            <textarea id="trata" placeholder="Ej: Resina compuesta y limpieza..."></textarea>
+            
+            <button class="btn-guardar-ficha" onclick="guardarAtencion()">Guardar en Historia Clínica</button>
+            <button onclick="cerrarModal()" style="background:none; border:none; color:gray; width:100%; margin-top:10px; cursor:pointer;">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        function cargarAgenda() {
+            const tbody = document.getElementById('tabla-body');
+            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Cargando...</td></tr>";
+
+            fetch('http://localhost/clinident/obtener_citas.php')
+                .then(res => res.json())
+                .then(lista => {
+                    tbody.innerHTML = "";
+                    lista.forEach(c => {
+                        const fila = document.createElement('tr');
+                        fila.innerHTML = `
+                            <td style="font-weight:800; color:var(--accent);">${c.hora}</td>
+                            <td><b>${c.paciente}</b></td>
+                            <td>${c.doctor}</td>
+                            <td>${c.fecha}</td>
+                            <td><button class="btn-atender" onclick="abrirAtencion('${c.paciente}')">Atender</button></td>
+                        `;
+                        tbody.appendChild(fila);
+                    });
+                });
+        }
+
+        // Lógica del Modal
+        function abrirAtencion(nombre) {
+            document.getElementById('paciente-nombre').innerText = "Paciente: " + nombre;
+            document.getElementById('modalDiagnostico').style.display = "block";
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalDiagnostico').style.display = "none";
+        }
+
+        function guardarAtencion() {
+            const d = document.getElementById('diag').value;
+            const t = document.getElementById('trata').value;
+            
+            if(d === "" || t === "") {
+                alert("Por favor completa el diagnóstico y tratamiento");
+                return;
+            }
+
+            alert("✅ Información guardada exitosamente en la ficha del paciente.");
+            cerrarModal();
+            // Aquí en el futuro conectaríamos a una tabla llamada 'historias_clinicas'
+        }
+
+        setInterval(() => {
+            document.getElementById('reloj').innerText = new Date().toLocaleString();
+        }, 1000);
+
+        window.onload = cargarAgenda;
+    </script>
+</body>
+</html>

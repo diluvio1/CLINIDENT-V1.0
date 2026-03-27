@@ -19,14 +19,41 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-    font-family:'Plus Jakarta Sans',sans-serif;
+background: linear-gradient(
+    270deg,
+    #1d1d63,
+    #1e3a8a,
+    #0084ff,
+    #1e3a8a
+);
+background-size: 300% 300%;
+animation: fondoAnimado 14s ease-in-out infinite;
+color:#1e293b;
+}
+body{
     height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    background: linear-gradient(135deg,#0f172a,#1e3a8a,#2563eb);
+
+    background: linear-gradient(
+        270deg,
+        #1d1d63,
+        #1e3a8a,
+        #0084ff,
+        #1e3a8a
+    );
+    background-size: 300% 300%;
+    animation: fondoAnimado 14s ease-in-out infinite;
+
+    color:#1e293b;
 }
 
+@keyframes fondoAnimado{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
 /* CARD */
 .card{
     background: var(--blanco); /* cuadro blanco */
@@ -64,7 +91,7 @@ input,select{
     width:100%;
     padding:12px;
     border-radius:10px;
-    border:1px solid #cbd5e1;
+    border:1px solid #000000;
     margin-top:5px;
     outline:none;
     background:#f9fafb; /* input claro */
@@ -72,14 +99,14 @@ input,select{
 }
 
 select {
-    color: white;
-    background: rgba(255,255,255,0.2);
+    color: rgb(110, 110, 110);
+    background: rgb(255, 255, 255);
 }
 
 /* 👇 ESTA ES LA CLAVE */
 select option {
     color: black;
-    background: white;
+    background: #ffffff;
 }
 input::placeholder{
     color:#9ca3af;
@@ -89,6 +116,23 @@ input::placeholder{
 input:focus,select:focus{
     box-shadow:0 0 0 2px var(--azul-claro);
     background:#ffffff;
+}
+.crear-cuenta{
+    margin-top:15px;
+    font-size:13px;
+    color:#64748b;
+    cursor:pointer;
+}
+
+.crear-cuenta span{
+    color: var(--azul);
+    font-weight:600;
+    transition:0.3s;
+}
+
+.crear-cuenta span:hover{
+    text-decoration:underline;
+    opacity:0.8;
 }
 
 /* BOTÓN */
@@ -118,8 +162,8 @@ button:hover{
         <h2>Iniciar Sesión</h2>
 
         <div class="input-group">
-            <label>Usuario</label>
-            <input type="text" id="user-name" placeholder="Tu nombre">
+            <label>Correo</label>
+            <input type="text" id="user-name" placeholder="Escribe tu correo">
         </div>
 
         <div class="input-group">
@@ -133,10 +177,13 @@ button:hover{
                 <option value="paciente">Paciente </option>
                 <option value="odontologo">Odontologo </option>
                 <option value="recepcion">recepcion </option>
-                <option value="admin">Administrador (Mando Total)</option>
+                <option value="admin">Administrador </option>
             </select>
         </div>
         <button onclick="gestionarAcceso()">Entrar</button>
+        <p class="crear-cuenta" onclick="irARegistro()">
+            ¿No tienes cuenta? <span>Créala aquí</span>
+        </p>
     </div>
 
     
@@ -161,7 +208,7 @@ button:hover{
         window.location.href = "odontologo.html";
     }
     else if(rol === "admin"){
-        window.location.href = "admin.html";
+        window.location.href = "odontologo.html";
     }
     else{
         window.location.href = "odontologo.html";
@@ -173,6 +220,11 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js')
     .then(() => console.log('Service Worker registrado'))
     .catch(err => console.log('Error:', err));
+}
+</script>
+<script>
+function irARegistro(){
+    window.location.href = "registro.html";
 }
 </script>
 
